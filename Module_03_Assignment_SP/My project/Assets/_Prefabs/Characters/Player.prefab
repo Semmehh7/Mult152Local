@@ -270,7 +270,10 @@ MonoBehaviour:
   playerCamera: {fileID: 6910706744934860128}
   playerRoot: {fileID: 683046844305308277}
   moveSpeed: 3
+  sprintSpeed: 3
   lookSpeed: 35
+  jumpForce: 7
+  crouchHeight: 1
   pushForce: 0.1
   gravityForce: -20
   stickForce: -2
@@ -357,17 +360,57 @@ MonoBehaviour:
     m_ActionId: 48e85477-7683-4919-8d0a-9e95e1faa31e
     m_ActionName: 'Player/Look[/Mouse/delta]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 781036648005611600}
+        m_TargetAssemblyTypeName: CC_Player, Assembly-CSharp
+        m_MethodName: OnSprint
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 0eec1022-7943-4883-8d5a-062a1184020c
     m_ActionName: 'Player/Sprint[/Keyboard/leftShift]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 781036648005611600}
+        m_TargetAssemblyTypeName: CC_Player, Assembly-CSharp
+        m_MethodName: OnCrouch
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: a2b73c89-fa42-402f-9f1b-ccba4d522c56
     m_ActionName: 'Player/Crouch[/Keyboard/leftCtrl]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 4daaa08a-609f-46b4-a3bf-05682c34afec
     m_ActionName: 'Test/New action[/Keyboard/b]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 781036648005611600}
+        m_TargetAssemblyTypeName: CC_Player, Assembly-CSharp
+        m_MethodName: OnJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: b5dd6bff-0f43-46c0-a8ce-26db41aace7c
+    m_ActionName: 'Player/Jump[/Keyboard/space]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 public class CC_Player : MonoBehaviour
 {
     [Header("Classes")]
@@ -10,12 +11,16 @@ public class CC_Player : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 3f;
+    public float sprintSpeed = 1.6f;
     public float lookSpeed = 10f;
+    public float jumpForce = 7f;
+    public float crouchHeight = 0.5f;
 
     [Header("Physics")]
     public float pushForce = 1.5f;
     public float gravityForce = -20f;
     public float stickForce = -2f;
+
 
     //Private vars
     private InputAction IA_Move, IA_Look; 
@@ -26,6 +31,11 @@ public class CC_Player : MonoBehaviour
     private float cameraPitchMin = -75f;
     private float cameraPitchMax = 75f;
     private float gravity;
+    private bool isGrounded = true;
+    private Vector3 velocity;
+    private bool isCrouching = false;
+    private float sprint = 1f;
+    //private float jumpVector;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -38,20 +48,23 @@ public class CC_Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        isGrounded = controller.isGrounded;
+
+        //Input to velocity =====================================================
         moveVector = playerRoot.TransformDirection(moveInput);
-        Vector3 velocity = new Vector3(moveVector.x, moveVector.y + gravity, moveVector.z);
+        velocity.x = moveVector.x * sprint; //Vel.y is handled in gravity.
+        velocity.z = moveVector.z * sprint;
         controller.Move(velocity * moveSpeed * Time.deltaTime);
 
+        //Camera=================================================================
         playerRoot.Rotate(Vector3.up, lookVector.x * lookSpeed * Time.deltaTime);
-
         cameraPitch -= lookVector.y * lookSpeed * Time.deltaTime;
         cameraPitch = Mathf.Clamp(cameraPitch, cameraPitchMin, cameraPitchMax);
         playerCamera.localEulerAngles = new Vector3(cameraPitch, 0f, 0f);
 
-        //Gravity
-        bool grounded = controller.isGrounded;
-        if (grounded && gravity < 0f) gravity = stickForce;
-        else gravity += gravityForce * Time.deltaTime;
+        //Gravity===============================================================
+        if (isGrounded && velocity.y < 0f) velocity.y = stickForce;
+        else velocity.y += gravityForce * Time.deltaTime;
     }
 
     //Binded Input Methods
@@ -63,15 +76,44 @@ public class CC_Player : MonoBehaviour
     {
         lookVector = ctx.ReadValue<Vector2>();
     }
+    public void OnJump(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed && isGrounded == true)
+        {
+            Debug.Log(ctx);
+            velocity.y += jumpForce;
+        }
+    }
+    public void OnCrouch(InputAction.CallbackContext ctx)
+    {
+        if(ctx.started) 
+        {
+            Debug.Log("Crouching....");
+            updateHeight(crouchHeight * -1);
+        }
+        if(ctx.canceled) updateHeight(crouchHeight);
 
+    }
+        public void OnSprint(InputAction.CallbackContext ctx)
+    {
+        if(ctx.started) sprint = sprintSpeed;
+        if(ctx.canceled) sprint = 1f;
+
+    }
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        Debug.Log (hit);
+        //Debug.Log (hit);
         Rigidbody body = hit.collider.attachedRigidbody;
 		if (body == null || body.isKinematic) return;
 
         Vector3 pushDir = new Vector3(hit.moveDirection.x, 0f, hit.moveDirection.z);
         body.AddForce(pushDir * pushForce, ForceMode.Impulse);
+    }
 
+    void updateHeight (float height)
+    {
+        if(height > 0) {isCrouching = false;}
+        else {isCrouching = true;}
+        controller.height += height;
     }
 }
